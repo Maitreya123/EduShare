@@ -2,40 +2,70 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import '../firebase_services.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
-class CourseBPage extends StatefulWidget {
+class CourseAPage extends StatefulWidget {
   @override
-  _CourseBPageState createState() => _CourseBPageState();
+  _CourseAPageState createState() => _CourseAPageState();
 }
 
-class _CourseBPageState extends State<CourseBPage> {
-  File? _selectedFile;
+class _CourseAPageState extends State<CourseAPage> {
+  String? _localPath;
 
-  Future<void> pickFile() async {
+  Future<void> uploadFile() async {
+    await _requestPermission();
+
     FilePickerResult? result = await FilePicker.platform.pickFiles();
-
     if (result != null) {
-      setState(() {
-        _selectedFile = File(result.files.single.path!);
-      });
-    } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('No file selected.')));
+      File file = File(result.files.single.path!);
+      final String fileName = file.path.split('/').last;
+      final Reference storageRef =
+          FirebaseStorage.instance.ref('course_b/$fileName');
+      await storageRef.putFile(file);
     }
   }
 
-  Future<void> uploadFile() async {
-    if (_selectedFile == null) return;
-    try {
-      await FirebaseStorage.instance
-          .ref('course_b/')
-          .child(_selectedFile!.path.split('/').last)
-          .putFile(_selectedFile!);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('File uploaded successfully!')));
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text('Failed to upload file.')));
+  Future<void> downloadAndOpenFile(String fileName) async {
+    await _requestPermission();
+
+    final Reference storageRef =
+        FirebaseStorage.instance.ref('course_b/$fileName');
+
+    final String url = await storageRef.getDownloadURL();
+
+    final http.Response response = await http.get(Uri.parse(url));
+
+    Directory? downloadsDirectory = await getDownloadsDirectory();
+
+    final String filePath = '${downloadsDirectory?.path ?? ''}/$fileName';
+
+    File file = File(filePath);
+
+    await file.writeAsBytes(response.bodyBytes);
+
+    setState(() {
+      _localPath = file.path;
+    });
+  }
+
+  Future<List<String>> listFilesInStorage() async {
+    final Reference storageRef = FirebaseStorage.instance.ref('course_a/');
+    final ListResult result = await storageRef.list();
+
+    return result.items.map((item) => item.name).toList();
+  }
+
+  Future<void> _requestPermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      status = await Permission.storage.request();
+      if (!status.isGranted) {
+        throw Exception("Storage permission not granted");
+      }
     }
   }
 
@@ -45,28 +75,40 @@ class _CourseBPageState extends State<CourseBPage> {
       appBar: AppBar(title: Text('Course B')),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
-              onPressed: pickFile,
-              child: Text('Pick File'),
-            ),
-            SizedBox(height: 20),
             ElevatedButton(
               onPressed: uploadFile,
               child: Text('Upload File'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                // Implement the download logic here
+            FutureBuilder<List<String>>(
+              future: listFilesInStorage(),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return CircularProgressIndicator();
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                } else {
+                  final fileNames = snapshot.data ?? [];
+                  return Expanded(
+                    child: ListView.builder(
+                      itemCount: fileNames.length,
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          title: Text(fileNames[index]),
+                          onTap: () => downloadAndOpenFile(fileNames[index]),
+                        );
+                      },
+                    ),
+                  );
+                }
               },
-              child: Text('Download File'),
             ),
-            // Display the selected file name (if any)
-            if (_selectedFile != null) ...[
-              SizedBox(height: 20),
-              Text('Selected File: ${_selectedFile!.path.split('/').last}'),
-            ]
+            if (_localPath != null)
+              Expanded(
+                child: PDFView(
+                  filePath: _localPath,
+                ),
+              ),
           ],
         ),
       ),
