@@ -4,6 +4,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:chat_app/screens/folder_page.dart';
 import 'package:chat_app/screens/year_page.dart';
+import 'package:chat_app/screens/course_a_page.dart';
+import 'package:chat_app/screens/course_b_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,7 +16,7 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-  const App({super.key});
+  const App({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +30,8 @@ class App extends StatelessWidget {
       home: const AuthScreen(),
       routes: {
         FolderPage.routeName: (ctx) => FolderPage(),
+        'course_a': (ctx) => CourseAPage(),
+        'course_b': (ctx) => CourseBPage(),
         // ... any other static routes
       },
       onGenerateRoute: (settings) {

@@ -1,4 +1,3 @@
-// semester_page.dart
 import 'package:flutter/material.dart';
 
 class SemesterPage extends StatelessWidget {
@@ -15,13 +14,15 @@ class SemesterPage extends StatelessWidget {
         children: [
           ElevatedButton(
             onPressed: () {
-              // Navigate to Course A page
+              Navigator.of(context).pushNamed(
+                  'course_a'); // Navigate to Course A page using the string 'course_a'
             },
             child: Text('Course A'),
           ),
           ElevatedButton(
             onPressed: () {
-              // Navigate to Course B page
+              Navigator.of(context).pushNamed(
+                  'course_b'); // Navigate to Course B page using the string 'course_b'
             },
             child: Text('Course B'),
           ),
