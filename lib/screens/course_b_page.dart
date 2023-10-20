@@ -8,12 +8,12 @@ import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class CourseAPage extends StatefulWidget {
+class CourseBPage extends StatefulWidget {
   @override
-  _CourseAPageState createState() => _CourseAPageState();
+  _CourseBPageState createState() => _CourseBPageState();
 }
 
-class _CourseAPageState extends State<CourseAPage> {
+class _CourseBPageState extends State<CourseBPage> {
   String? _localPath;
 
   Future<void> uploadFile() async {
