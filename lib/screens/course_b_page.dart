@@ -53,7 +53,7 @@ class _CourseBPageState extends State<CourseBPage> {
   }
 
   Future<List<String>> listFilesInStorage() async {
-    final Reference storageRef = FirebaseStorage.instance.ref('course_a/');
+    final Reference storageRef = FirebaseStorage.instance.ref('course_b/');
     final ListResult result = await storageRef.list();
 
     return result.items.map((item) => item.name).toList();
