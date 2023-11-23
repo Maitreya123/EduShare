@@ -29,7 +29,10 @@ class _AuthScreenState extends State<AuthScreen> {
         //log users in now
         final userCredentials = await _firebase.signInWithEmailAndPassword(
             email: _enteredEmail, password: _enteredPassword);
-        Navigator.of(context).pushReplacementNamed(FolderPage.routeName);
+        Navigator.of(context).pushReplacementNamed(
+          FolderPage.routeName, 
+          arguments: {'userEmail': _enteredEmail}, // Pass the email as an argument
+        );
         print(userCredentials);
       } else {
         final userCredentials = await _firebase.createUserWithEmailAndPassword(

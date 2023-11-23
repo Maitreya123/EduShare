@@ -29,7 +29,12 @@ class App extends StatelessWidget {
       ),
       home: const AuthScreen(),
       routes: {
-        FolderPage.routeName: (ctx) => FolderPage(),
+        // FolderPage.routeName: (ctx) => FolderPage(),
+        FolderPage.routeName: (ctx) {
+          final args = ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>;
+          final userEmail = args['userEmail'];
+          return FolderPage(userEmail: userEmail);
+        },
         'course_a': (ctx) => CourseAPage(),
         'course_b': (ctx) => CourseBPage(),
         // ... any other static routes

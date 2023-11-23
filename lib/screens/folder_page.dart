@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/screens/year_page.dart';
+import 'chatpage.dart'; // Import the chat page file
 
 class FolderPage extends StatelessWidget {
   static const routeName = '/folder-page';
+  final String userEmail; // property to hold the user's email
+  FolderPage({required this.userEmail});
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +26,23 @@ class FolderPage extends StatelessWidget {
           YearTile('Year 3'),
           YearTile('Year 4'),
         ],
+      ),
+
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => chatpage(email: userEmail),
+                ),
+              );
+            },
+            child: Text('Open Chat'),
+          ),
+        ),
       ),
     );
   }

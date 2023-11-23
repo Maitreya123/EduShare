@@ -44,6 +44,7 @@ dependencies:
   path_provider: any
   flutter_cache_manager: any
   permission_handler: any
+  cloud_firestore: ^4.13.2
 
 
 
