@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:chat_app/screens/semester_page.dart';
 // year_page.dart
+import '../course.dart'; // Import Course class
+import '../course_page.dart'; // Import CoursePage widget
+import '../course_data.dart';
 
 class YearPage extends StatelessWidget {
   static const routeName = '/year-page';
@@ -19,17 +22,26 @@ class YearPage extends StatelessWidget {
           children: [
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
+                // Extract just the numeric part of the year string
+                String numericYear = year.replaceAll(RegExp(r'[^0-9]'), '');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) =>
-                        SemesterPage(year: year, semester: 'Semester 1')));
+                        SemesterPage(year: numericYear, semester: '1'),
+                  ),
+                );
               },
               child: Text('Semester 1'),
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.of(context).push(MaterialPageRoute(
+                String numericYear = year.replaceAll(RegExp(r'[^0-9]'), '');
+                Navigator.of(context).push(
+                  MaterialPageRoute(
                     builder: (context) =>
-                        SemesterPage(year: year, semester: 'Semester 2')));
+                        SemesterPage(year: numericYear, semester: '2'),
+                  ),
+                );
               },
               child: Text('Semester 2'),
             ),

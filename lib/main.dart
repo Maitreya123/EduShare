@@ -4,8 +4,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:chat_app/screens/folder_page.dart';
 import 'package:chat_app/screens/year_page.dart';
-import 'package:chat_app/screens/course_a_page.dart';
-import 'package:chat_app/screens/course_b_page.dart';
+import '../course.dart'; // Import Course class
+import '../course_page.dart'; // Import CoursePage widget
+import '../course_data.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,25 +30,23 @@ class App extends StatelessWidget {
       ),
       home: const AuthScreen(),
       routes: {
-        // FolderPage.routeName: (ctx) => FolderPage(),
         FolderPage.routeName: (ctx) {
-          final args = ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>;
+          final args =
+              ModalRoute.of(ctx)?.settings.arguments as Map<String, dynamic>;
           final userEmail = args['userEmail'];
           return FolderPage(userEmail: userEmail);
         },
-        'course_a': (ctx) => CourseAPage(),
-        'course_b': (ctx) => CourseBPage(),
-        // ... any other static routes
+        // Other named routes if necessary
       },
       onGenerateRoute: (settings) {
-        switch (settings.name) {
-          case YearPage.routeName:
-            final year = settings.arguments as String;
-            return MaterialPageRoute(builder: (ctx) => YearPage(year: year));
-          // Handle other dynamic routes here, if any
-          default:
-            return null;
+        if (settings.name == YearPage.routeName) {
+          final year = settings.arguments as String;
+          return MaterialPageRoute(builder: (ctx) => YearPage(year: year));
         }
+        // No else if block for CoursePage.routeName
+
+        // Handle other dynamic routes here, if any
+        return null;
       },
     );
   }
