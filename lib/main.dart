@@ -7,12 +7,14 @@ import 'package:chat_app/screens/year_page.dart';
 import '../course.dart'; // Import Course class
 import '../course_page.dart'; // Import CoursePage widget
 import '../course_data.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  await dotenv.load(fileName: ".env");
   runApp(const App());
 }
 

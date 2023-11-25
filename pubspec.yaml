@@ -30,6 +30,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  
+  #chatgpt 
+  chat_gpt_sdk:
+    git:
+      url: https://github.com/iampawan/Flutter-ChatGPT.git
+  velocity_x: ^3.6.0
+  flutter_dotenv: ^5.0.2
+  http: ^1.0.0
+  # chat_gpt_sdk: ^2.2.5
 
 
 
@@ -73,6 +82,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/chat.png
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

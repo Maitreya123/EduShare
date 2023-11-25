@@ -1,6 +1,8 @@
+import 'package:chat_app/screens/chatgptfile.dart';
 import 'package:flutter/material.dart';
 import 'package:chat_app/screens/year_page.dart';
 import 'chatpage.dart'; // Import the chat page file
+import 'chatgptfile.dart';
 
 class FolderPage extends StatelessWidget {
   static const routeName = '/folder-page';
@@ -27,7 +29,6 @@ class FolderPage extends StatelessWidget {
           YearTile('Year 4'),
         ],
       ),
-
       bottomNavigationBar: BottomAppBar(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -43,6 +44,21 @@ class FolderPage extends StatelessWidget {
             child: Text('Open Chat'),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  ChatGPTFile(), //----------------------------------------------------
+            ),
+          );
+        },
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+        icon: Icon(Icons.navigation),
+        label: Text("ChatGPT"),
       ),
     );
   }
