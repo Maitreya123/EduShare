@@ -13,6 +13,7 @@ class ChatGPTFile extends StatefulWidget {
 class _ChatGPTFileState extends State<ChatGPTFile> {
   final TextEditingController promptController = TextEditingController();
   String responseTxt = '';
+  bool isLoading = false; // To manage loading state
 
   @override
   void dispose() {
@@ -23,6 +24,7 @@ class _ChatGPTFileState extends State<ChatGPTFile> {
   Future<void> fetchResponse() async {
     setState(() {
       responseTxt = 'Loading...';
+      isLoading = true; // Start loading
     });
 
     try {
@@ -50,10 +52,9 @@ class _ChatGPTFileState extends State<ChatGPTFile> {
           responseTxt = choices.isNotEmpty ? choices[0]['text'] : 'No response';
         });
       } else if (response.statusCode == 429) {
-        int retryAfter =
-            int.tryParse(response.headers['retry-after'] ?? '30') ?? 30;
-        await Future.delayed(Duration(seconds: retryAfter));
-        fetchResponse();
+        setState(() {
+          responseTxt = 'Rate limit exceeded. Please try again later.';
+        });
       } else {
         setState(() {
           responseTxt = 'Error: ${response.statusCode}';
@@ -63,6 +64,10 @@ class _ChatGPTFileState extends State<ChatGPTFile> {
       setState(() {
         responseTxt = 'Error: ${e.toString()}';
       });
+    } finally {
+      setState(() {
+        isLoading = false; // Stop loading
+      });
     }
   }
 
@@ -71,10 +76,8 @@ class _ChatGPTFileState extends State<ChatGPTFile> {
     return Scaffold(
       backgroundColor: const Color(0xff343541),
       appBar: AppBar(
-        title: const Text(
-          'Flutter and ChatGPT',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Flutter and ChatGPT',
+            style: TextStyle(color: Colors.white)),
         backgroundColor: const Color(0xff343541),
       ),
       body: Column(
@@ -86,6 +89,7 @@ class _ChatGPTFileState extends State<ChatGPTFile> {
           TextFormFieldBuilder(
             promptController: promptController,
             onPressed: fetchResponse,
+            isLoading: isLoading, // Pass loading state
           ),
         ],
       ),
@@ -119,11 +123,13 @@ class PromptBuilder extends StatelessWidget {
 class TextFormFieldBuilder extends StatelessWidget {
   final TextEditingController promptController;
   final VoidCallback onPressed;
+  final bool isLoading;
 
   const TextFormFieldBuilder({
     Key? key,
     required this.promptController,
     required this.onPressed,
+    required this.isLoading,
   }) : super(key: key);
 
   @override
@@ -151,11 +157,14 @@ class TextFormFieldBuilder extends StatelessWidget {
                 hintText: 'Ask me anything!',
                 hintStyle: const TextStyle(color: Colors.grey),
               ),
+              enabled: !isLoading, // Disable when loading
             ),
           ),
           IconButton(
-            onPressed: onPressed,
-            icon: const Icon(Icons.send, color: Colors.white),
+            onPressed: isLoading ? null : onPressed, // Disable when loading
+            icon: isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Icon(Icons.send, color: Colors.white),
             color: const Color(0xff19bc99),
           ),
         ],
