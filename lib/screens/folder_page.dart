@@ -1,7 +1,6 @@
-import 'package:chat_app/screens/chatgptfile.dart';
 import 'package:flutter/material.dart';
-import 'package:chat_app/screens/year_page.dart';
-import 'chatpage.dart'; // Import the chat page file
+import 'year_page.dart';
+import 'chatpage.dart';
 import 'chatgptfile.dart';
 
 class FolderPage extends StatelessWidget {
@@ -13,21 +12,33 @@ class FolderPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Select Year')),
-      body: GridView(
-        padding: const EdgeInsets.all(20),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // Displaying 2 tiles side by side
-          childAspectRatio:
-              3 / 2, // Adjusting aspect ratio for better appearance
-          crossAxisSpacing: 20,
-          mainAxisSpacing: 20,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 20, 149, 254),
+              Color.fromARGB(255, 194, 163, 199),
+              Color.fromARGB(255, 214, 118, 118),
+            ],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
         ),
-        children: [
-          YearTile('Year 1'),
-          YearTile('Year 2'),
-          YearTile('Year 3'),
-          YearTile('Year 4'),
-        ],
+        child: GridView(
+          padding: const EdgeInsets.all(20),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 3 / 2,
+            crossAxisSpacing: 20,
+            mainAxisSpacing: 20,
+          ),
+          children: [
+            YearTile('Year 1'),
+            YearTile('Year 2'),
+            YearTile('Year 3'),
+            YearTile('Year 4'),
+          ],
+        ),
       ),
       bottomNavigationBar: BottomAppBar(
         child: Padding(
@@ -50,8 +61,7 @@ class FolderPage extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  ChatGPTFile(), //----------------------------------------------------
+              builder: (context) => ChatGPTFile(),
             ),
           );
         },
@@ -74,9 +84,8 @@ class YearTile extends StatelessWidget {
       onTap: () {
         Navigator.of(context).pushNamed(
           YearPage.routeName,
-          arguments: title, // 'Year 1', 'Year 2', etc.
+          arguments: title,
         );
-        // Here, you'll navigate to the specific year page when it's created.
       },
       child: Container(
         alignment: Alignment.center,
@@ -88,8 +97,10 @@ class YearTile extends StatelessWidget {
           ),
           borderRadius: BorderRadius.circular(15),
         ),
-        child: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        child: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
     );
   }
