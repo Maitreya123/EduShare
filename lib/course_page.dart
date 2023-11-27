@@ -2,12 +2,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../firebase_services.dart'; // Adjust the import based on your project structure
+import '../firebase_services.dart'; // Adjust based on your project structure
 import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'course.dart'; // Adjust the import based on your project structure
+import 'course.dart'; // Adjust based on your project structure
 
 class CoursePage extends StatefulWidget {
   final Course course;
@@ -78,46 +78,75 @@ class _CoursePageState extends State<CoursePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(widget.course.name)),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-              onPressed: uploadFile,
-              child: const Text('Upload File'),
-            ),
-            FutureBuilder<List<String>>(
-              future: listFilesInStorage(),
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const CircularProgressIndicator();
-                } else if (snapshot.hasError) {
-                  return Text('Error: ${snapshot.error}');
-                } else {
-                  final fileNames = snapshot.data ?? [];
-                  return Expanded(
-                    child: ListView.builder(
-                      itemCount: fileNames.length,
-                      itemBuilder: (context, index) {
-                        return ListTile(
-                          title: Text(fileNames[index]),
-                          onTap: () => downloadAndOpenFile(fileNames[index]),
-                        );
-                      },
-                    ),
-                  );
-                }
-              },
-            ),
-            if (_localPath != null)
-              Expanded(
-                child: PDFView(
-                  filePath: _localPath,
-                ),
-              ),
-          ],
+      appBar: AppBar(
+        title: Text(widget.course.name),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Colors.blueGrey.shade800, Colors.blueGrey.shade200],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              _buildUploadButton(),
+              _buildFilesList(),
+              _buildPdfViewer(),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildUploadButton() {
+    return ElevatedButton(
+      onPressed: uploadFile,
+      style: ElevatedButton.styleFrom(
+        primary: Colors.blue, // Button color
+        onPrimary: Colors.white, // Text color
+      ),
+      child: const Text('Upload File'),
+    );
+  }
+
+  Widget _buildFilesList() {
+    return FutureBuilder<List<String>>(
+      future: listFilesInStorage(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CircularProgressIndicator();
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        } else {
+          final fileNames = snapshot.data ?? [];
+          return Expanded(
+            child: ListView.builder(
+              itemCount: fileNames.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(fileNames[index]),
+                  onTap: () => downloadAndOpenFile(fileNames[index]),
+                );
+              },
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  Widget _buildPdfViewer() {
+    return _localPath == null
+        ? Container()
+        : Expanded(
+            child: PDFView(
+              filePath: _localPath,
+            ),
+          );
   }
 }
