@@ -128,9 +128,21 @@ class _CoursePageState extends State<CoursePage> {
             child: ListView.builder(
               itemCount: fileNames.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(fileNames[index]),
-                  onTap: () => downloadAndOpenFile(fileNames[index]),
+                return Container(
+                  margin: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                  child: ListTile(
+                    leading: Image.asset(
+                      'assets/images/pdf.PNG',
+                      width: 24.0, // Adjust the width as needed
+                      height: 24.0, // Adjust the height as needed
+                    ),
+                    title: Text(fileNames[index]),
+                    onTap: () => downloadAndOpenFile(fileNames[index]),
+                  ),
                 );
               },
             ),
